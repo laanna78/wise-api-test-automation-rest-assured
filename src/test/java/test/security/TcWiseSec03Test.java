@@ -1,9 +1,12 @@
 package test.security;
 
-import test.BaseOfWiseTests;
+import io.qameta.allure.Allure;
+import io.qameta.allure.Description;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
@@ -12,16 +15,37 @@ import static org.hamcrest.Matchers.*;
 @DisplayName("TC-WISE-SEC-03: Profiladatok lekérése érvénytelen tokennel")
 public class TcWiseSec03Test extends BaseOfWiseTests {
     @Test
+    @Description("Annak ellenőrzése, hogy az API elutasítja-e a kérést (401), ha a megadott token lejárt vagy érvénytelen.")
     public void invalidTokenResponseTest() {
-        given()
-                .header("Authorization", "Bearer " + ConfigReader.getProperty("invalid_token"))
-                .contentType(ContentType.JSON)
-        .when()
-                .get("/v1/profiles")
-        .then()
-                .log().ifValidationFails()
-                .statusCode(401)
-                .body("error", equalTo("invalid_token"))
-                .body("error_description", equalTo("Invalid token"));
+        Response response = Allure.step("Lépés 1: GET kérés küldése érvénytelen tokennel", () -> {
+            String invalidToken = ConfigReader.getProperty("invalid_token");
+            logger.info("Kérés indítása érvénytelen tokennel: {}", invalidToken);
+
+            return given()
+                    .header("Authorization", "Bearer " + invalidToken)
+                    .contentType(ContentType.JSON)
+            .when()
+                    .get("/v1/profiles");
+        });
+
+        Allure.step("Lépés 2: HTTP 401 Unauthorized státuszkód ellenőrzése", (step) -> {
+            logger.info("Státuszkód ellenőrzése...");
+            int code = response.getStatusCode();
+            step.parameter("Várt státuszkód", "401");
+            step.parameter("Kapott státuszkód", String.valueOf(code));
+            response.then().statusCode(401);
+        });
+
+        Allure.step("Lépés 3: Specifikus hibaüzenet validálása (invalid_token)", () -> {
+            logger.info("Érvénytelen token hibaüzenet ellenőrzése...");
+
+            Allure.addAttachment("Érvénytelen token hiba válasz", "application/json", response.asPrettyString());
+
+            response.then()
+                    .body("error", equalTo("invalid_token"))
+                    .body("error_description", equalTo("Invalid token"));
+
+            logger.info("A hibaüzenet validálása sikeres.");
+        });
     }
 }
