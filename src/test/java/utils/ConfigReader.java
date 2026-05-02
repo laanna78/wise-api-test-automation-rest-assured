@@ -19,4 +19,13 @@ public class ConfigReader {
     public static String getProperty(String key) {
         return properties.getProperty(key);
     }
+
+    public static void setProperty(String key, String value) {
+        properties.setProperty(key, value);
+        try (java.io.FileOutputStream fos = new java.io.FileOutputStream("src/test/resources/config.properties")) {
+            properties.store(fos, "Frissítve a következő tesztfutás során");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,10 +1,8 @@
 package test.security;
 
 import io.qameta.allure.*;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -21,17 +19,13 @@ public class TcWiseSec04Test extends BaseOfWiseTests {
             logger.info("Kérés indítása a profil végpontra a Trace ID ellenőrzéséhez...");
             return given()
                     .header("Authorization", "Bearer " + ConfigReader.getProperty("auth_token"))
-                    .contentType(ContentType.JSON)
+                    .contentType(JSON)
             .when()
                     .get("/v1/profiles");
         });
 
         Allure.step("Lépés 2: HTTP 200 OK státuszkód ellenőrzése", (step) -> {
-            logger.info("Státuszkód ellenőrzése...");
-            int code = response.getStatusCode();
-            step.parameter("Várt státuszkód", "200");
-            step.parameter("Kapott státuszkód", String.valueOf(code));
-            response.then().statusCode(200);
+            checkStatusCode(response, 200, step);
         });
 
         Allure.step("Lépés 3: x-trace-id fejléc kinyerése és validálása", (step) -> {

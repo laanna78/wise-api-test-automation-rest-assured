@@ -1,11 +1,8 @@
 package test.security;
 
-import io.qameta.allure.Allure;
-import io.qameta.allure.Description;
-import io.restassured.http.ContentType;
+import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -22,22 +19,17 @@ public class TcWiseSec01Test extends BaseOfWiseTests {
             logger.info("Kérés indítása a profil adatokért...");
             return given()
                     .header("Authorization", "Bearer " + ConfigReader.getProperty("auth_token"))
-                    .contentType(ContentType.JSON)
+                    .contentType(JSON)
             .when()
                     .get("/v1/profiles");
         });
 
         Allure.step("Lépés 2: HTTP 200 OK státuszkód ellenőrzése", (step) -> {
-            logger.info("Státuszkód ellenőrzése...");
-            int code = response.getStatusCode();
-            step.parameter("Várt státuszkód", "200");
-            step.parameter("Kapott státuszkód", code);
-            response.then().statusCode(200);
+            checkStatusCode(response, 200, step);
         });
 
         Allure.step("Lépés 3: Profil ID és névadatok validálása a válaszban", () -> {
-            String body = response.asPrettyString();
-            Allure.addAttachment("Validált JSON válasz", "application/json", body);
+            attachJson(response, "Validált JSON válasz");
             int expectedId = Integer.parseInt(ConfigReader.getProperty("expected_profile_id"));
             String expectedFirstName = ConfigReader.getProperty("expected_first_name");
             String expectedLastName = ConfigReader.getProperty("expected_last_name");

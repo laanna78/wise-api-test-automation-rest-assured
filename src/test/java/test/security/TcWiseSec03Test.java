@@ -1,11 +1,8 @@
 package test.security;
 
-import io.qameta.allure.Allure;
-import io.qameta.allure.Description;
-import io.restassured.http.ContentType;
+import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -23,23 +20,17 @@ public class TcWiseSec03Test extends BaseOfWiseTests {
 
             return given()
                     .header("Authorization", "Bearer " + invalidToken)
-                    .contentType(ContentType.JSON)
+                    .contentType(JSON)
             .when()
                     .get("/v1/profiles");
         });
 
         Allure.step("Lépés 2: HTTP 401 Unauthorized státuszkód ellenőrzése", (step) -> {
-            logger.info("Státuszkód ellenőrzése...");
-            int code = response.getStatusCode();
-            step.parameter("Várt státuszkód", "401");
-            step.parameter("Kapott státuszkód", String.valueOf(code));
-            response.then().statusCode(401);
+            checkStatusCode(response, 401, step);
         });
 
         Allure.step("Lépés 3: Specifikus hibaüzenet validálása (invalid_token)", () -> {
-            logger.info("Érvénytelen token hibaüzenet ellenőrzése...");
-
-            Allure.addAttachment("Érvénytelen token hiba válasz", "application/json", response.asPrettyString());
+            attachJson(response, "Érvénytelen token hibaüzenet");
 
             response.then()
                     .body("error", equalTo("invalid_token"))
