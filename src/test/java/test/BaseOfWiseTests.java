@@ -22,6 +22,10 @@ import org.junit.jupiter.api.TestInfo;
 import static io.restassured.config.JsonConfig.jsonConfig;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 public class BaseOfWiseTests {
     protected static final Logger logger = LogManager.getLogger();
@@ -71,7 +75,7 @@ public class BaseOfWiseTests {
 
     protected void checkStatusCode(Response response, int expectedCode, Allure.StepContext stepContext) {
         int actualCode = response.getStatusCode();
-        logger.info("Ellenőrzés - Várt: {}, Kapott: {}", expectedCode, actualCode);
+        logger.info("Ellenőrzés - Várt státuszkód: {}, Kapott státuszkód: {}", expectedCode, actualCode);
         stepContext.parameter("Várt státusz", String.valueOf(expectedCode));
         stepContext.parameter("Kapott státusz", String.valueOf(actualCode));
         response.then().statusCode(expectedCode);
@@ -79,5 +83,24 @@ public class BaseOfWiseTests {
 
     protected void attachJson(Response response, String attachmentLabel) {
         Allure.addAttachment(attachmentLabel, "application/json", response.asPrettyString());
+    }
+
+    protected static final DateTimeFormatter FLEXIBLE_FORMATTER = new DateTimeFormatterBuilder()
+            .append(DateTimeFormatter.ISO_LOCAL_DATE)
+            .appendOptional(new DateTimeFormatterBuilder().appendLiteral('T').toFormatter())
+            .appendOptional(new DateTimeFormatterBuilder().appendLiteral(' ').toFormatter())
+            .append(DateTimeFormatter.ISO_LOCAL_TIME)
+            .optionalStart().appendOffsetId().optionalEnd()
+            .toFormatter();
+
+    protected LocalDateTime parseToLocalDateTime(String rawDate) {
+        if (rawDate == null) return null;
+        try {
+            // Megpróbáljuk alapként (időzóna nélkül)
+            return LocalDateTime.parse(rawDate, FLEXIBLE_FORMATTER);
+        } catch (Exception e) {
+            // Ha nem megy, akkor zónával együtt, majd konvertáljuk
+            return OffsetDateTime.parse(rawDate, FLEXIBLE_FORMATTER).toLocalDateTime();
+        }
     }
 }

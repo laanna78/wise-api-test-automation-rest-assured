@@ -33,7 +33,7 @@ public class TcWiseFin02Test extends BaseOfWiseTests {
                     .header("Authorization", "Bearer " + ConfigReader.getProperty("auth_token"))
                     .contentType(JSON)
                     .body(requestBody)
-                    .when()
+            .when()
                     .post("/v1/accounts");
         });
 

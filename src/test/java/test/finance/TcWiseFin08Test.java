@@ -14,20 +14,22 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-04: Árfolyamkalkuláció átvezetéshez")
-public class TcWiseFin04Test extends BaseOfWiseTests {
+@DisplayName("TC-WISE-FIN-08: Árfolyamkalkuláció külső utaláshoz")
+public class TcWiseFin08Test extends BaseOfWiseTests {
     @Test
-    @Description("Az EUR -> GBP átvezetés előtti árfolyamkalkuláció elvégzése és az ajánlat (quote) azonosítójának mentése.")
-    public void calculateRateAndCreateQuoteTest() {
+    @Description("Az USD -> külső USD átvezetés előtti árfolyamkalkuláció elvégzése és ajánlat létrehozása.")
+    public void calculateRateForExternalUsdTransferTest() {
 
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("sourceCurrency", "EUR");
-        requestBody.put("targetCurrency", "GBP");
-        requestBody.put("sourceAmount", 10);
-        requestBody.put("payOut", "BALANCE");
+        requestBody.put("sourceCurrency", "USD");
+        requestBody.put("targetCurrency", "USD");
+        requestBody.put("sourceAmount", 100);
+        requestBody.put("targetAmount", null);
+        requestBody.put("targetAccount", Integer.parseInt(ConfigReader.getProperty("recipient_id_usa")));
+        requestBody.put("payOut", null);
 
-        Response response = Allure.step("Lépés 1: POST kérés küldése az árfolyamkalkulációhoz és ajánlat létrehozásához", () -> {
-            logger.info("Árfolyamkalkuláció indítása EUR -> GBP...");
+        Response response = Allure.step("Lépés 1: POST kérés küldése az árfolyamkalkulációhoz", () -> {
+            logger.info("Külső USD -> USD árfolyamkalkuláció indítása...");
             return given()
                     .header("Authorization", "Bearer " + ConfigReader.getProperty("auth_token"))
                     .contentType(JSON)
@@ -43,14 +45,17 @@ public class TcWiseFin04Test extends BaseOfWiseTests {
         Allure.step("Lépés 3: Ajánlat adatainak validálása és a quoteId mentése", () -> {
             attachJson(response, "Létrehozott ajánlat (Quote)");
 
-            BigDecimal expectedAmount = new BigDecimal("10.00");
+            BigDecimal expectedAmount = new BigDecimal("100.00");
             BigDecimal actualAmount = response.jsonPath().getObject("sourceAmount", BigDecimal.class);
 
             response.then()
                     .body("id", notNullValue())
-                    .body("sourceCurrency", equalTo("EUR"))
-                    .body("targetCurrency", equalTo("GBP"))
-                    .body("payOut", equalTo("BALANCE"));
+                    .body("sourceCurrency", equalTo("USD"))
+                    .body("targetCurrency", equalTo("USD"))
+                    .body("providedAmountType", equalTo("SOURCE"))
+                    .body("payOut", equalTo("BANK_TRANSFER"))
+                    .body("targetAccount", equalTo(Integer.parseInt(ConfigReader.getProperty("recipient_id_usa"))))
+                    .body("status", equalTo("PENDING"));
 
             assertThat("A forrás összeg nem megfelelő!", actualAmount.compareTo(expectedAmount) == 0);
             String quoteId = response.jsonPath().getString("id");

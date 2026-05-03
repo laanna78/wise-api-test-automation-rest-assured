@@ -6,6 +6,9 @@ import org.junit.jupiter.api.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
@@ -54,7 +57,10 @@ public class TcWiseBal03Test extends BaseOfWiseTests {
                     .body("groupId", nullValue())
                     .body("recipientId", notNullValue());
 
-            logger.info("AUD egyenleg adatok sikeresen validálva.");
+            BigDecimal amountValue = response.jsonPath().getObject("amount.value", BigDecimal.class);
+            ConfigReader.setProperty("aud_balance_before", amountValue.setScale(2, RoundingMode.HALF_UP).toString());
+
+            logger.info("AUD egyenleg adatok sikeresen validálva. Az AUD számla kiinduló egyenlege: {}", amountValue);
         });
     }
 }

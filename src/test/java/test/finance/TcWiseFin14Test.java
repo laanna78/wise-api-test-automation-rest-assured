@@ -14,20 +14,20 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-04: Árfolyamkalkuláció átvezetéshez")
-public class TcWiseFin04Test extends BaseOfWiseTests {
+@DisplayName("TC-WISE-FIN-14: Árfolyamkalkuláció fedezethiányos belső átvezetéshez")
+public class TcWiseFin14Test extends BaseOfWiseTests {
     @Test
-    @Description("Az EUR -> GBP átvezetés előtti árfolyamkalkuláció elvégzése és az ajánlat (quote) azonosítójának mentése.")
-    public void calculateRateAndCreateQuoteTest() {
+    @Description("Az EUR -> USD belső átvezetés előtti árfolyamkalkuláció elvégzése és ajánlat létrehozása, fedezethiánnyal (extrém magas összeg).")
+    public void calculateRateWithInsufficientFundsTest() {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("sourceCurrency", "EUR");
-        requestBody.put("targetCurrency", "GBP");
-        requestBody.put("sourceAmount", 10);
+        requestBody.put("targetCurrency", "USD");
+        requestBody.put("sourceAmount", 10000000);
         requestBody.put("payOut", "BALANCE");
 
-        Response response = Allure.step("Lépés 1: POST kérés küldése az árfolyamkalkulációhoz és ajánlat létrehozásához", () -> {
-            logger.info("Árfolyamkalkuláció indítása EUR -> GBP...");
+        Response response = Allure.step("Lépés 1: POST kérés küldése az árfolyamkalkulációhoz (fedezethiányos összeggel)", () -> {
+            logger.info("Árfolyamkalkuláció indítása fedezethiányos EUR -> USD belső átvezetéshez...");
             return given()
                     .header("Authorization", "Bearer " + ConfigReader.getProperty("auth_token"))
                     .contentType(JSON)
@@ -41,22 +41,22 @@ public class TcWiseFin04Test extends BaseOfWiseTests {
         });
 
         Allure.step("Lépés 3: Ajánlat adatainak validálása és a quoteId mentése", () -> {
-            attachJson(response, "Létrehozott ajánlat (Quote)");
+            attachJson(response, "Létrehozott fedezethiányos ajánlat (Quote)");
 
-            BigDecimal expectedAmount = new BigDecimal("10.00");
+            BigDecimal expectedAmount = new BigDecimal("10000000.00");
             BigDecimal actualAmount = response.jsonPath().getObject("sourceAmount", BigDecimal.class);
 
             response.then()
                     .body("id", notNullValue())
                     .body("sourceCurrency", equalTo("EUR"))
-                    .body("targetCurrency", equalTo("GBP"))
+                    .body("targetCurrency", equalTo("USD"))
                     .body("payOut", equalTo("BALANCE"));
 
             assertThat("A forrás összeg nem megfelelő!", actualAmount.compareTo(expectedAmount) == 0);
             String quoteId = response.jsonPath().getString("id");
-            ConfigReader.setProperty("quote_id", quoteId);
+            ConfigReader.setProperty("quote_id_insufficient", quoteId);
 
-            logger.info("Az ajánlat sikeresen létrejött. Quote ID: {}", quoteId);
+            logger.info("Az ajánlat sikeresen létrejött a fedezethiány ellenére is. Quote ID: {}", quoteId);
         });
     }
 }
