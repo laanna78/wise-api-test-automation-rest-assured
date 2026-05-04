@@ -2,16 +2,17 @@ package test.transaction;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-TRA-07: Szűrés jövőbeli dátumra")
+
 public class TcWiseTra07Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-TRA-07: Szűrés jövőbeli dátumra")
     @Description("Tranzakciók lekérdezése egy távoli jövőbeli dátumra. A várt eredmény egy üres lista.")
     public void filterTransactionsForFutureDateTest() {
         String futureDate = "2099-01-01T00:00:00Z";
@@ -34,6 +35,7 @@ public class TcWiseTra07Test extends BaseOfWiseTests {
             attachJson(response, "Jövőbeli szűrés eredménye");
 
             response.then()
+                    .assertThat()
                     .body("$", is(empty()));
 
             logger.info("A szűrés sikeres: a rendszer helyesen üres listát adott vissza a jövőbeli dátumra.");

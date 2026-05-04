@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -11,9 +11,11 @@ import java.util.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-09: Külső utalás indítása - amerikai kedvezményezettnek")
+
 public class TcWiseFin09Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-09: Külső utalás indítása - amerikai kedvezményezettnek",
+            dependsOnMethods = {"test.finance.TcWiseFin01Test.createUsaRecipientTest", "test.finance.TcWiseFin08Test.calculateRateForExternalUsdTransferTest"})
     @Description("A korábban létrehozott amerikai kedvezményezettnek történő utalás indítása a generált ajánlat alapján.")
     public void initiateExternalUsdTransferTest() {
 
@@ -40,6 +42,7 @@ public class TcWiseFin09Test extends BaseOfWiseTests {
             attachJson(response, "Indított utalás adatai");
 
             response.then()
+                    .assertThat()
                     .body("id", notNullValue())
                     .body("status", equalTo("incoming_payment_waiting"));
 

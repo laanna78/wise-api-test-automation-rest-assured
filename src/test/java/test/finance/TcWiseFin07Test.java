@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,11 @@ import java.math.RoundingMode;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@DisplayName("TC-WISE-FIN-07: Egyenleg frissülés ellenőrzése - célszámla")
+
 public class TcWiseFin07Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-07: Egyenleg frissülés ellenőrzése - célszámla",
+            dependsOnMethods = "test.finance.TcWiseFin05Test.internalTransferEurToGbpTest")
     @Description("Annak validálása, hogy az átvezetés után a célszámla egyenlege az átutalt összeggel nőtt.")
     public void verifyTargetBalanceIncreaseTest() {
 

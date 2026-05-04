@@ -2,7 +2,8 @@ package test.transaction;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.Assert;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +13,10 @@ import java.util.Objects;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-TRA-04: Szűrés befejezett státuszra")
+
 public class TcWiseTra04Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-TRA-04: Szűrés befejezett státuszra")
     @Description("Csak a befejezett (COMPLETED) státuszú tranzakciók listázása és validálása.")
     public void filterCompletedTransactionsTest() {
 
@@ -37,6 +39,7 @@ public class TcWiseTra04Test extends BaseOfWiseTests {
 
             // Ellenőrizzük, hogy minden kapott tranzakció státusza COMPLETED
             response.then()
+                    .assertThat()
                     .body("activities.status", everyItem(equalTo("COMPLETED")));
 
             // Időrendi sorrend ellenőrzése (createdOn mező alapján)
@@ -56,7 +59,7 @@ public class TcWiseTra04Test extends BaseOfWiseTests {
                         logger.error("Sorrendi hiba a limitált listában! Index {}: {}, Index {}: {}", i, current, i + 1, next);
                     }
 
-                    Assertions.assertTrue(isCorrectOrder, "A limitált tranzakciók nem csökkenő időrendben érkeztek!");
+                    Assert.assertTrue(isCorrectOrder, "A limitált tranzakciók nem csökkenő időrendben érkeztek!");
                 }
             }
 

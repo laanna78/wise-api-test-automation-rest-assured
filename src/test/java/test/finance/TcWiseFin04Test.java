@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -14,9 +14,10 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-04: Árfolyamkalkuláció átvezetéshez")
+
 public class TcWiseFin04Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-04: Árfolyamkalkuláció átvezetéshez")
     @Description("Az EUR -> GBP átvezetés előtti árfolyamkalkuláció elvégzése és az ajánlat (quote) azonosítójának mentése.")
     public void calculateRateAndCreateQuoteTest() {
 
@@ -47,6 +48,7 @@ public class TcWiseFin04Test extends BaseOfWiseTests {
             BigDecimal actualAmount = response.jsonPath().getObject("sourceAmount", BigDecimal.class);
 
             response.then()
+                    .assertThat()
                     .body("id", notNullValue())
                     .body("sourceCurrency", equalTo("EUR"))
                     .body("targetCurrency", equalTo("GBP"))

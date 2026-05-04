@@ -2,7 +2,9 @@ package test.transaction;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.Assert;
+import org.testng.SkipException;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 import java.util.Arrays;
@@ -14,9 +16,10 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@DisplayName("TC-WISE-TRA-03: Lapozás ellenőrzése")
+
 public class TcWiseTra03Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-TRA-03: Lapozás ellenőrzése")
     @Description("A második oldal lekérése és összehasonlítása a mentett első oldal azonosítóival.")
     public void listTransactionsPaginationTest() {
 
@@ -25,7 +28,9 @@ public class TcWiseTra03Test extends BaseOfWiseTests {
         List<String> firstFiveIds = Arrays.asList(savedIdsRaw.split(","));
         String nextCursor = ConfigReader.getProperty("next_page_cursor");
 
-        Assumptions.assumeTrue(nextCursor != null && !nextCursor.isEmpty(), "Nincs több elem, nincsen következő oldal!");
+        if (nextCursor == null || nextCursor.isEmpty()) {
+            throw new SkipException("Nincs több elem, nincsen következő oldal!");
+        }
 
         // 2. LÉPÉS: A második oldal lekérése
         Response response = Allure.step("Lépés 1: Második oldal lekérése (size=5, offset=5)", () -> given()
@@ -45,6 +50,7 @@ public class TcWiseTra03Test extends BaseOfWiseTests {
 
             // Elemszám ellenőrzése
             response.then()
+                    .assertThat()
                     .body("activities", instanceOf(List.class))
                     .body("activities.size()", equalTo(5));
 
@@ -65,7 +71,7 @@ public class TcWiseTra03Test extends BaseOfWiseTests {
                         logger.error("Sorrendi hiba a limitált listában! Index {}: {}, Index {}: {}", i, current, i + 1, next);
                     }
 
-                    Assertions.assertTrue(isCorrectOrder, "A limitált tranzakciók nem csökkenő időrendben érkeztek!");
+                    Assert.assertTrue(isCorrectOrder, "A limitált tranzakciók nem csökkenő időrendben érkeztek!");
                 }
             }
 

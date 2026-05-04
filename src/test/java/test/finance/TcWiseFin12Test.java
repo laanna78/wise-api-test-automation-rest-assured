@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,10 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-12: Idempotencia ellenőrzése")
+
 public class TcWiseFin12Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-12: Idempotencia ellenőrzése", dependsOnMethods = "test.finance.TcWiseFin09Test.initiateExternalUsdTransferTest")
     @Description("Ugyanazon utalás elküldése kétszer ugyanazzal az egyedi UUID-val annak igazolására, hogy nem jön létre új tranzakció.")
     public void checkIdempotencyTest() {
 
@@ -44,6 +45,7 @@ public class TcWiseFin12Test extends BaseOfWiseTests {
             long previousTransferId = Long.parseLong(ConfigReader.getProperty("transfer_id_usa"));
 
             response.then()
+                    .assertThat()
                     .body("id", equalTo(previousTransferId))
                     .body("customerTransactionId", equalTo(ConfigReader.getProperty("customer_transaction_id")));
 

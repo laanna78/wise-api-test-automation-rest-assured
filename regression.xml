@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Wise API Test Suite">
+
+    <test name="Regression tests">
+        <classes>
+            <class name="test.security.TcWiseSec01Test"/>
+            <class name="test.security.TcWiseSec02Test"/>
+            <class name="test.security.TcWiseSec03Test"/>
+            <class name="test.security.TcWiseSec04Test"/>
+            <class name="test.security.TcWiseSec05Test"/>
+
+            <class name="test.balance.TcWiseBal01Test"/>
+            <class name="test.balance.TcWiseBal02Test"/>
+            <class name="test.balance.TcWiseBal03Test"/>
+            <class name="test.balance.TcWiseBal04Test"/>
+            <class name="test.balance.TcWiseBal05Test"/>
+            <class name="test.balance.TcWiseBal06Test"/>
+            <class name="test.balance.TcWiseBal07Test"/>
+
+            <class name="test.finance.TcWiseFin01Test"/>
+            <class name="test.finance.TcWiseFin02Test"/>
+            <class name="test.finance.TcWiseFin03Test"/>
+            <class name="test.finance.TcWiseFin04Test"/>
+            <class name="test.finance.TcWiseFin05Test"/>
+            <class name="test.finance.TcWiseFin06Test"/>
+            <class name="test.finance.TcWiseFin07Test"/>
+            <class name="test.finance.TcWiseFin08Test"/>
+            <class name="test.finance.TcWiseFin09Test"/>
+            <class name="test.finance.TcWiseFin10Test"/>
+            <class name="test.finance.TcWiseFin11Test"/>
+            <class name="test.finance.TcWiseFin12Test"/>
+            <class name="test.finance.TcWiseFin13Test"/>
+            <class name="test.finance.TcWiseFin14Test"/>
+            <class name="test.finance.TcWiseFin15Test"/>
+            <class name="test.finance.TcWiseFin16Test"/>
+            <class name="test.finance.TcWiseFin17Test"/>
+
+            <class name="test.transaction.TcWiseTra01Test"/>
+            <class name="test.transaction.TcWiseTra02Test"/>
+            <class name="test.transaction.TcWiseTra03Test"/>
+            <class name="test.transaction.TcWiseTra04Test"/>
+            <class name="test.transaction.TcWiseTra05Test"/>
+            <class name="test.transaction.TcWiseTra06Test"/>
+            <class name="test.transaction.TcWiseTra07Test"/>
+
+            <class name="test.foreignExchange.TcWiseFx01Test"/>
+            <class name="test.foreignExchange.TcWiseFx02Test"/>
+            <class name="test.foreignExchange.TcWiseFx03Test"/>
+
+            <class name="test.errorHandling.TcWiseErr01Test"/>
+            <class name="test.errorHandling.TcWiseErr02Test"/>
+            <class name="test.errorHandling.TcWiseErr03Test"/>
+            <class name="test.errorHandling.TcWiseErr04Test"/>
+            <class name="test.errorHandling.TcWiseErr05Test"/>
+        </classes>
+    </test>
+</suite>

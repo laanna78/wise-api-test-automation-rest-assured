@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,10 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-03: Kedvezményezettek listája")
+
 public class TcWiseFin03Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-03: Kedvezményezettek listája")
     @Description("Kedvezményezettek listájának lekérdezése és a korábban létrehozott elemek jelenlétének ellenőrzése.")
     public void listRecipientsTest() {
 
@@ -34,15 +35,13 @@ public class TcWiseFin03Test extends BaseOfWiseTests {
         Allure.step("Lépés 3: A lista tartalmának validálása", () -> {
             attachJson(response, "Kedvezményezett lista");
 
-            response.then()
-                    .body("content", instanceOf(List.class))
-                    .body("content.size()", greaterThanOrEqualTo(2));
-
             int idUsa = Integer.parseInt(ConfigReader.getProperty("recipient_id_usa"));
             int idEur = Integer.parseInt(ConfigReader.getProperty("recipient_id_eur"));
 
             response.then()
+                    .assertThat()
                     .body("content", instanceOf(List.class))
+                    .body("content.size()", greaterThanOrEqualTo(2))
                     .body("content.id", hasItems(idUsa, idEur));
 
             List<Integer> ids = response.jsonPath().getList("content.id");

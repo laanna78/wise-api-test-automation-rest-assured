@@ -2,16 +2,17 @@ package test.security;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-SEC-03: Profiladatok lekérése érvénytelen tokennel")
+
 public class TcWiseSec03Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-SEC-03: Profiladatok lekérése érvénytelen tokennel")
     @Description("Annak ellenőrzése, hogy az API elutasítja-e a kérést (401), ha a megadott token lejárt vagy érvénytelen.")
     public void invalidTokenResponseTest() {
         Response response = Allure.step("Lépés 1: GET kérés küldése érvénytelen tokennel", () -> {
@@ -33,6 +34,7 @@ public class TcWiseSec03Test extends BaseOfWiseTests {
             attachJson(response, "Érvénytelen token hibaüzenet");
 
             response.then()
+                    .assertThat()
                     .body("error", equalTo("invalid_token"))
                     .body("error_description", equalTo("Invalid token"));
 

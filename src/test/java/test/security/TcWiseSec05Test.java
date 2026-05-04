@@ -2,17 +2,17 @@ package test.security;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-SEC-03: Biztonsági teszt - Nem megfelelő profil ID")
+
 public class TcWiseSec05Test extends BaseOfWiseTests {
 
-    @Test
+    @Test(description = "TC-WISE-SEC-03: Biztonsági teszt - Nem megfelelő profil ID")
     @Description("Annak ellenőrzése, hogy a rendszer tiltja-e a hozzáférést (403 Forbidden) egy másik (nem létező " +
             "vagy idegen) profil egyenlegéhez.")
     public void unauthorizedProfileAccessTest() {
@@ -33,6 +33,7 @@ public class TcWiseSec05Test extends BaseOfWiseTests {
             attachJson(response, "Hibaüzenet");
 
             response.then()
+                    .assertThat()
                     .body("error", equalTo("unauthorized"))
                     .body("message", equalTo("Unauthorized"));
 

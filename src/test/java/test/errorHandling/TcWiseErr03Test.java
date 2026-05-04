@@ -2,7 +2,7 @@ package test.errorHandling;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,10 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-ERR-03: Hibakezelés - Nem létező devizakód")
+
 public class TcWiseErr03Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-ERR-03: Hibakezelés - Nem létező devizakód")
     @Description("Quote indítása érvénytelen cél devizakóddal (ABC). A várt eredmény HTTP 400 és a hibás mező megjelölése.")
     public void invalidCurrencyCodeTest() {
 
@@ -42,6 +43,7 @@ public class TcWiseErr03Test extends BaseOfWiseTests {
             attachJson(response, "Hiba válasz - Érvénytelen devizakód");
 
             response.then()
+                    .assertThat()
                     .body("errors[0].code", equalTo("CurrencyCode"))
                     .body("errors[0].path", equalTo("targetCurrency"))
                     .body("errors[0].message", containsString("That wasn't a valid ISO-4217 currency code"));

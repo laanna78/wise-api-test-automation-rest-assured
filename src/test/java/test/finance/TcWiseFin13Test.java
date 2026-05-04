@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -11,9 +11,10 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.*;
 
-@DisplayName("TC-WISE-FIN-13: Bejövő utalás szimulációja")
+
 public class TcWiseFin13Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-13: Bejövő utalás szimulációja")
     @Description("Bejövő utalás szimulációja a megadott profilhoz tartozó USD egyenlegre.")
     public void simulateIncomingTransferTest() {
 

@@ -2,16 +2,17 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-10: Tranzakció státuszának lekérdezése")
+
 public class TcWiseFin10Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-10: Tranzakció státuszának lekérdezése", dependsOnMethods = "test.finance.TcWiseFin09Test.initiateExternalUsdTransferTest")
     @Description("Az elindított utalás aktuális állapotának lekérdezése a tranzakció azonosító alapján.")
     public void getTransferStatusTest() {
 
@@ -32,6 +33,7 @@ public class TcWiseFin10Test extends BaseOfWiseTests {
             attachJson(response, "Tranzakció aktuális státusza");
 
             response.then()
+                    .assertThat()
                     .body("status", equalTo("incoming_payment_waiting"));
 
             logger.info("A tranzakció státusza: {}", response.jsonPath().getString("status"));

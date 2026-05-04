@@ -2,17 +2,16 @@ package test.security;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.Assert;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("TC-WISE-SEC-04: Trace ID jelenlétének ellenőrzése")
 public class TcWiseSec04Test extends BaseOfWiseTests {
 
-    @Test
+    @Test(description = "TC-WISE-SEC-04: Trace ID jelenlétének ellenőrzése")
     @Description("Annak ellenőrzése, hogy a válasz fejléc tartalmazza-e az x-trace-id-t")
     public void traceIdPresenceInHeaderTest() {
         Response response = Allure.step("Lépés 1: GET kérés küldése a /v1/profiles végpontra", () -> {
@@ -39,8 +38,8 @@ public class TcWiseSec04Test extends BaseOfWiseTests {
                 logger.error("HIBA: Az x-trace-id nem található a fejlécben!");
             }
 
-            assertNotNull(traceId, "Az x-trace-id fejléc hiányzik!");
-            assertFalse(traceId.isEmpty(), "Az x-trace-id fejléc üres!");
+            Assert.assertNotNull(traceId, "Az x-trace-id fejléc hiányzik!");
+            Assert.assertFalse(traceId.isEmpty(), "Az x-trace-id fejléc üres!");
         });
     }
 }

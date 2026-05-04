@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,11 @@ import java.math.RoundingMode;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@DisplayName("TC-WISE-FIN-06: Egyenleg frissülés ellenőrzése - forrásszámla")
+
 public class TcWiseFin06Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-06: Egyenleg frissülés ellenőrzése - forrásszámla",
+            dependsOnMethods = "test.finance.TcWiseFin05Test.internalTransferEurToGbpTest")
     @Description("Annak validálása, hogy az átvezetés után a forrásszámla egyenlege az átutalt összeggel csökkent.")
     public void verifySourceBalanceDecreaseTest() {
 

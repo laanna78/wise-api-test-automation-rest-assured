@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -13,9 +13,10 @@ import java.util.UUID;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-15: Belső átvezetés indítása - fedezethiány")
+
 public class TcWiseFin15Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-15: Belső átvezetés indítása - fedezethiány", dependsOnMethods = "test.finance.TcWiseFin14Test.calculateRateWithInsufficientFundsTest")
     @Description("Belső átvezetés indítása az aktuális egyenleget meghaladó összeggel a TC-WISE-FIN-14-ben létrehozott quote alapján.")
     public void initiateTransferWithInsufficientFundsTest() {
 
@@ -41,6 +42,7 @@ public class TcWiseFin15Test extends BaseOfWiseTests {
             attachJson(response, "Fedezethiány miatti hiba válasz");
 
             response.then()
+                    .assertThat()
                     .body("code", equalTo("quote.payment-option-disabled"));
 
             logger.info("A rendszer fedezethiány miatt elutasította az átvezetést: quote.payment-option-disabled");

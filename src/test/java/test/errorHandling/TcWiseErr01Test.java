@@ -2,7 +2,7 @@ package test.errorHandling;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,9 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-ERR-01: Hibakezelés - Hiányzó kötelező mező")
 public class TcWiseErr01Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-ERR-01: Hibakezelés - Hiányzó kötelező mező")
     @Description("Quote indítása üres sourceCurrency mezővel. A várt eredmény HTTP 400 és részletes hibaüzenet.")
     public void missingCurrencyCodeTest() {
 
@@ -42,6 +42,7 @@ public class TcWiseErr01Test extends BaseOfWiseTests {
             attachJson(response, "Hiba válasz - Érvénytelen devizakód");
 
             response.then()
+                    .assertThat()
                     .body("errors", hasSize(greaterThan(0)))
                     .body("errors[0].code", equalTo("CurrencyCode"))
                     .body("errors[0].path", equalTo("sourceCurrency"))

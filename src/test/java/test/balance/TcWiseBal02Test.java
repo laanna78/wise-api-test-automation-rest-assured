@@ -2,7 +2,7 @@ package test.balance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,10 +12,9 @@ import java.math.RoundingMode;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-BAL-02: USD egyenleg lekérése")
 public class TcWiseBal02Test extends BaseOfWiseTests {
 
-    @Test
+    @Test(description = "TC-WISE-BAL-02: USD egyenleg lekérése")
     @Description("Az USD számla egyenleg (balance) adatainak és aktuális összegének ellenőrzése az egyenleg ID alapján.")
     public void getUSDBalanceTest() {
         Response response = Allure.step("Lépés 1: GET kérés küldése az USD egyenleg végpontra", () -> {
@@ -36,6 +35,7 @@ public class TcWiseBal02Test extends BaseOfWiseTests {
             attachJson(response, "Egyenleg adatok");
 
             response.then()
+                    .assertThat()
                     .body("id", equalTo(Integer.parseInt(ConfigReader.getProperty("balance_id_usd"))))
                     .body("currency", equalTo("USD"))
                     .body("amount.value", notNullValue())

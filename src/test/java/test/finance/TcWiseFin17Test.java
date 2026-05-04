@@ -2,16 +2,17 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-17: Kedvezményezett törlése - amerikai számla")
+
 public class TcWiseFin17Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-17: Kedvezményezett törlése - amerikai számla", dependsOnMethods = "test.finance.TcWiseFin01Test.createUsaRecipientTest")
     @Description("Az amerikai kedvezményezett külső számla eltávolítása DELETE kéréssel.")
     public void deleteUsaRecipientTest() {
 
@@ -32,6 +33,7 @@ public class TcWiseFin17Test extends BaseOfWiseTests {
             attachJson(response, "Törlés utáni válasz");
 
             response.then()
+                    .assertThat()
                     .body("active", equalTo(false));
 
             ConfigReader.setProperty("recipient_id_usa", "");

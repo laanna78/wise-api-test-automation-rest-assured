@@ -2,17 +2,17 @@ package test.security;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-SEC-01: Profiladatok lekérése")
+
 public class TcWiseSec01Test extends BaseOfWiseTests {
 
-    @Test
+    @Test(description = "TC-WISE-SEC-01: Profiladatok lekérése")
     @Description("Alapvető profiladatok (név, típus) lekérése érvényes tokennel és a válasz validálása.")
     public void getProfileDataTest() {
         Response response = Allure.step("Lépés 1: GET kérés küldése a /v1/profiles végpontra érvényes tokennel", () -> {
@@ -37,6 +37,7 @@ public class TcWiseSec01Test extends BaseOfWiseTests {
             logger.info("Várt adatok ellenőrzése - ID: {}, Név: {} {}", expectedId, expectedFirstName, expectedLastName);
 
             response.then()
+                    .assertThat()
                     .body("[0].id", equalTo(expectedId))
                     .body("[0].details.firstName", equalTo(expectedFirstName))
                     .body("[0].details.lastName", equalTo(expectedLastName));

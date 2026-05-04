@@ -2,7 +2,8 @@ package test.foreignExchange;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.Assert;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -15,9 +16,9 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FX-02: Célösszeg alapú Quote validáció")
 public class TcWiseFx02Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FX-02: Célösszeg alapú Quote validáció", dependsOnMethods = "test.finance.TcWiseFin02Test.createEurRecipientTest")
     @Description("Quote validálása, ahol a célösszeg fix.")
     public void targetAmountBasedQuoteValidationTest() {
 
@@ -52,7 +53,7 @@ public class TcWiseFx02Test extends BaseOfWiseTests {
                 BigDecimal totalFee = new BigDecimal(feeMap.get("total").toString());
 
                 logger.info("A totalFee összege ({}) megfelel-e a transferwise fee ({}) és a payIn fee ({}) összegének.", totalFee, transferwiseFee, payInFee);
-                Assertions.assertEquals(0, totalFee.compareTo(transferwiseFee.add(payInFee)), "Díjösszeg hiba!");
+                Assert.assertEquals(totalFee.compareTo(transferwiseFee.add(payInFee)), 0, "Díjösszeg hiba!");
 
                 // Forrásösszeg számítás: (Target / Rate) + Fee = Source
                 BigDecimal target = new BigDecimal(option.get("targetAmount").toString());
@@ -63,23 +64,24 @@ public class TcWiseFx02Test extends BaseOfWiseTests {
                         .setScale(2, RoundingMode.HALF_UP);
 
                 logger.info("A forrásdeviza összege ({}) megfelel-e az elvártnak ({}).", calculatedSource, source);
-                Assertions.assertEquals(0, source.compareTo(calculatedSource),
+                Assert.assertEquals(source.compareTo(calculatedSource), 0,
                         String.format("Forrásösszeg hiba! Számított: %s, aktuális: %s", calculatedSource, source));
 
                 // Legalább egy opció aktív
                 if (!(boolean) option.get("disabled")) hasEnabledOption = true;
                 logger.info("Ez az opció aktív-e? {}", hasEnabledOption);
             }
-            Assertions.assertTrue(hasEnabledOption, "Nincs egyetlen választható fizetési mód sem!");
+            Assert.assertTrue(hasEnabledOption, "Nincs egyetlen választható fizetési mód sem!");
 
             // Időrendi validáció
             LocalDateTime createdTime = parseToLocalDateTime(response.jsonPath().getString("createdTime"));
             LocalDateTime rateExpirationTime = parseToLocalDateTime(response.jsonPath().getString("rateExpirationTime"));
 
             logger.info("Az árfolyam lejárati ideje ({}) a létrehozás ideje ({}) utáni időpont-e.", rateExpirationTime, createdTime);
-            Assertions.assertTrue(rateExpirationTime.isAfter(createdTime), "Lejárati idő hiba!");
+            Assert.assertTrue(rateExpirationTime.isAfter(createdTime), "Lejárati idő hiba!");
 
             response.then()
+                    .assertThat()
                     .body("providedAmountType", equalTo("TARGET"))
                     .body("targetAmount", comparesEqualTo(new BigDecimal("100.00")));
         });

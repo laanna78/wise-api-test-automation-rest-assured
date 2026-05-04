@@ -2,7 +2,8 @@ package test.transaction;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.Assert;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -13,9 +14,10 @@ import java.util.Objects;
 
 import static io.restassured.RestAssured.*;
 
-@DisplayName("TC-WISE-TRA-06: Szűrés dátum után")
+
 public class TcWiseTra06Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-TRA-06: Szűrés dátum után")
     @Description("Egy adott dátumidőt követő tranzakciók lekérése és a növekvő időrendi sorrend ellenőrzése.")
     public void filterTransactionsAfterDateTest() {
         String startDate = "2026-04-28T00:00:00Z";
@@ -49,12 +51,12 @@ public class TcWiseTra06Test extends BaseOfWiseTests {
                 for (int i = 0; i < validDates.size(); i++) {
                     LocalDateTime actualDate = parseToLocalDateTime(validDates.get(i));
 
-                    Assertions.assertFalse(actualDate.isBefore(startThreshold), String.format("A tranzakció dátuma (%s) korábbi, mint a kért kezdődátum (%s)!",
+                    Assert.assertFalse(actualDate.isBefore(startThreshold), String.format("A tranzakció dátuma (%s) korábbi, mint a kért kezdődátum (%s)!",
                             validDates.get(i), startDate));
 
                     if (i < validDates.size() - 1 && validDates.get(i+1) != null) {
                         LocalDateTime nextDate = parseToLocalDateTime(validDates.get(i + 1));
-                        Assertions.assertFalse(actualDate.isAfter(nextDate),
+                        Assert.assertFalse(actualDate.isAfter(nextDate),
                                 String.format("Sorrendi hiba: %s > %s", validDates.get(i), validDates.get(i + 1)));
                     }
                 }

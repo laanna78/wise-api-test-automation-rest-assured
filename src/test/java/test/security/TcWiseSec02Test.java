@@ -2,16 +2,16 @@ package test.security;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-SEC-02: Profiladatok lekérése hiányzó tokennel")
+
 public class TcWiseSec02Test extends BaseOfWiseTests {
 
-    @Test
+    @Test(description = "TC-WISE-SEC-02: Profiladatok lekérése hiányzó tokennel")
     @Description("Annak ellenőrzése, hogy az API elutasítja-e a kérést (401), ha hiányzik az Authorization fejléc.")
     public void missingTokenResponseTest() {
         Response response = Allure.step("Lépés 1: GET kérés küldése Authorization fejléc nélkül", () -> {
@@ -30,6 +30,7 @@ public class TcWiseSec02Test extends BaseOfWiseTests {
             attachJson(response, "Hibaüzenet");
 
             response.then()
+                    .assertThat()
                     .body("error", equalTo("missing_token"))
                     .body("error_description", equalTo("Missing token"));
 

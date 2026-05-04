@@ -2,7 +2,8 @@ package test.transaction;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.Assert;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +13,10 @@ import java.util.Objects;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-TRA-01: Tranzakciólista lekérdezése alapértelmezetten")
+
 public class TcWiseTra01Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-TRA-01: Tranzakciólista lekérdezése alapértelmezetten")
     @Description("Az összes tranzakció lekérése szűrés nélkül, a dátum szerinti csökkenő sorrend ellenőrzésével.")
     public void listTransactionsDefaultTest() {
 
@@ -34,12 +36,11 @@ public class TcWiseTra01Test extends BaseOfWiseTests {
         Allure.step("Lépés 3: Lista formátum és dátum szerinti sorrend validálása", () -> {
             attachJson(response, "Tranzakció lista");
 
-            // Ellenőrizzük, hogy a válasz egy lista
             response.then()
+                    .assertThat()
                     .body("activities", instanceOf(List.class))
                     .body("activities", not(empty()));
 
-            // Created dátumok kinyerése a sorrend ellenőrzéséhez
             List<String> createdDates = response.jsonPath().getList("activities.createdOn");
 
             List<String> validDates = createdDates.stream()
@@ -60,7 +61,7 @@ public class TcWiseTra01Test extends BaseOfWiseTests {
                     logger.error("Sorrendi hiba detektálva! Index {}: {}, Index {}: {}", i, current, i + 1, next);
                 }
 
-                Assertions.assertTrue(isCorrectOrder,
+                Assert.assertTrue(isCorrectOrder,
                         String.format("Hibás sorrend a(z) %d. és %d. elem között!", i, i + 1));
             }
 

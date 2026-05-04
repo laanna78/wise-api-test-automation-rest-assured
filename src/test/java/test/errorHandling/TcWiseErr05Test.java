@@ -2,16 +2,17 @@ package test.errorHandling;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-ERR-05: Hibakezelés - Nem létező transfer lekérdezése")
+
 public class TcWiseErr05Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-ERR-05: Hibakezelés - Nem létező transfer lekérdezése")
     @Description("Lekérdezés indítása egy nem létező transfer azonosítóval.")
     public void nonExistentTransferStatusTest() {
         String invalidTransferId = "2148495060";
@@ -33,8 +34,9 @@ public class TcWiseErr05Test extends BaseOfWiseTests {
             attachJson(response, "Hiba válasz - Transfer not found");
 
             response.then()
+                    .assertThat()
                     .body("errors[0].code", equalTo("transfer.not.found"))
-                .body("errors[0].message", containsString("Transfer with such id is not found among your transfers"));
+                    .body("errors[0].message", containsString("Transfer with such id is not found among your transfers"));
 
             logger.info("A validáció sikeres: a rendszer megfelelően kezelte a nem létező tranzakció ID-t.");
         });

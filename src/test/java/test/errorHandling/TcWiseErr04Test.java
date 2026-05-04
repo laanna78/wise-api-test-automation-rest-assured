@@ -2,16 +2,17 @@ package test.errorHandling;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-ERR-04: Hibakezelés - HTTP Metódus hiba")
+
 public class TcWiseErr04Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-ERR-04: Hibakezelés - HTTP Metódus hiba")
     @Description("GET hívás küldése a quotes végpontra, amely csak a POST metódust támogatja.")
     public void methodNotAllowedTest() {
 
@@ -32,9 +33,10 @@ public class TcWiseErr04Test extends BaseOfWiseTests {
             attachJson(response, "Hiba válasz - Not Found");
 
             response.then()
+                    .assertThat()
                     .body("message", equalTo("Resource not found"))
-                .body("status", equalTo("404"))
-                .body("error", equalTo("Not Found"));
+                    .body("status", equalTo("404"))
+                    .body("error", equalTo("Not Found"));
 
             logger.info("A rendszer helyesen 404-es hibát adott a nem támogatott GET metódusra.");
         });

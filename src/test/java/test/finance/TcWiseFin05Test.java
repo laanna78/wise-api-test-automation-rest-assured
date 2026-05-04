@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -13,9 +13,11 @@ import java.util.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-05: Saját számlák közötti átvezetés: EUR -> GBP")
+
 public class TcWiseFin05Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-05: Saját számlák közötti átvezetés: EUR -> GBP",
+            dependsOnMethods = "test.finance.TcWiseFin04Test.calculateRateAndCreateQuoteTest")
     @Description("Pénz mozgatása EUR és GBP egyenleg között belső váltással, és a tranzakció azonosító mentése.")
     public void internalTransferEurToGbpTest() {
 
@@ -41,6 +43,7 @@ public class TcWiseFin05Test extends BaseOfWiseTests {
             attachJson(response, "Sikeres átvezetés adatai");
 
             response.then()
+                    .assertThat()
                     .body("id", notNullValue())
                     .body("state", anyOf(equalTo("COMPLETED"), equalTo("PROCESSING")));
 

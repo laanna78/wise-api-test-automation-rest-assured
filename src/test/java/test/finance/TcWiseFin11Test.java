@@ -2,16 +2,17 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.equalTo;
 
-@DisplayName("TC-WISE-FIN-11: Tranzakció státuszának léptetése")
+
 public class TcWiseFin11Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-11: Tranzakció státuszának léptetése", dependsOnMethods = "test.finance.TcWiseFin09Test.initiateExternalUsdTransferTest")
     @Description("Az utalás manuális léptetése PROCESSING állapotba a Simulation API használatával.")
     public void simulateTransferProcessingTest() {
 
@@ -32,6 +33,7 @@ public class TcWiseFin11Test extends BaseOfWiseTests {
             attachJson(response, "Szimuláció eredménye");
 
             response.then()
+                    .assertThat()
                     .body("status", equalTo("processing"));
 
             logger.info("A tranzakció státusza: {}", response.jsonPath().getString("status"));

@@ -2,7 +2,8 @@ package test.transaction;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.Assert;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +13,10 @@ import java.util.Objects;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-TRA-02: Megjelenített elemek számának beállítása")
+
 public class TcWiseTra02Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-TRA-02: Megjelenített elemek számának beállítása")
     @Description("A válaszban kapott elemek számának korlátozása a 'size' paraméter segítségével.")
     public void listTransactionsWithLimitTest() {
 
@@ -37,11 +39,22 @@ public class TcWiseTra02Test extends BaseOfWiseTests {
 
             // Elemszám ellenőrzése
             response.then()
+                    .assertThat()
                     .body("activities", instanceOf(List.class))
                     .body("activities.size()", equalTo(5));
 
-            List<String> createdDates = response.jsonPath().getList("activities.createdOn");
+            List<String> firstFiveIds = response.jsonPath().getList("activities.resource.id");
 
+            // Lista összefűzése Stringgé az id-k mentéséhez
+            String idsToSave = String.join(",", firstFiveIds);
+            ConfigReader.setProperty("first_five_ids", idsToSave);
+
+            logger.info("Első öt tranzakció ID elmentve: {}", idsToSave);
+
+            // Cursor elmentése a következő teszteset lapozás funkciójához
+            ConfigReader.setProperty("next_page_cursor", response.jsonPath().getString("cursor"));
+
+            List<String> createdDates = response.jsonPath().getList("activities.createdOn");
             List<String> validDates = createdDates.stream()
                     .filter(Objects::nonNull)
                     .toList();
@@ -57,20 +70,9 @@ public class TcWiseTra02Test extends BaseOfWiseTests {
                         logger.error("Sorrendi hiba a limitált listában! Index {}: {}, Index {}: {}", i, current, i + 1, next);
                     }
 
-                    Assertions.assertTrue(isCorrectOrder, "A limitált tranzakciók nem csökkenő időrendben érkeztek!");
+                    Assert.assertTrue(isCorrectOrder, "A limitált tranzakciók nem csökkenő időrendben érkeztek!");
                 }
             }
-
-            List<String> firstFiveIds = response.jsonPath().getList("activities.resource.id");
-
-            // Lista összefűzése Stringgé az id-k mentéséhez
-            String idsToSave = String.join(",", firstFiveIds);
-            ConfigReader.setProperty("first_five_ids", idsToSave);
-
-            logger.info("Első öt tranzakció ID elmentve: {}", idsToSave);
-
-            // Cursor elmentése a következő teszteset lapozás funkciójához
-            ConfigReader.setProperty("next_page_cursor", response.jsonPath().getString("cursor"));
 
             logger.info("A lista pontosan 5 elemet tartalmaz és a sorrend megfelelő.");
         });

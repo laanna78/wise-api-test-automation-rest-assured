@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,10 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-16: Kedvezményezett létrehozása - rossz IBAN")
+
 public class TcWiseFin16Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-16: Kedvezményezett létrehozása - rossz IBAN")
     @Description("Kedvezményezett létrehozásának megkísérlése érvénytelen IBAN számmal.")
     public void createRecipientWithInvalidIbanTest() {
 
@@ -46,6 +47,7 @@ public class TcWiseFin16Test extends BaseOfWiseTests {
             attachJson(response, "Szerver válasza a hibás IBAN-ra");
 
             response.then()
+                    .assertThat()
                     .body("errors[0].code", equalTo("NOT_VALID"))
                     .body("errors[0].message", equalTo("Please specify a valid IBAN."))
                     .body("errors[0].path", equalTo("IBAN"));

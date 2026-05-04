@@ -1,38 +1,38 @@
 package test;
 
 import io.qameta.allure.Allure;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
+import io.restassured.filter.log.*;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.config.JsonPathConfig;
 import io.restassured.response.Response;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.*;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
 import utils.ConfigReader;
 import io.restassured.RestAssured;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInfo;
+import org.apache.logging.log4j.*;
 
 import static io.restassured.config.JsonConfig.jsonConfig;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.List;
+import java.util.Properties;
 
 public class BaseOfWiseTests {
     protected static final Logger logger = LogManager.getLogger();
     protected final ContentType JSON = ContentType.JSON;
 
-    @BeforeAll
-    public static void setup() {
+    @BeforeSuite
+    public void setup() {
         RestAssured.baseURI = ConfigReader.getProperty("base_url");
 
         RestAssured.filters(new AllureRestAssured(), new RequestLoggingFilter(), new ResponseLoggingFilter());
@@ -42,18 +42,82 @@ public class BaseOfWiseTests {
                 .jsonConfig(jsonConfig().numberReturnType(JsonPathConfig.NumberReturnType.BIG_DECIMAL));
     }
 
-    @BeforeEach
-    public void startLog(TestInfo testInfo) {
-        logger.info(">>> Teszt indítása: " + testInfo.getDisplayName());
+    @BeforeMethod
+    public void startLog(Method method) {
+        String testName = method.getName();
+
+        // Ha van kitöltött description, akkor azt íratjuk ki (ez felel meg a DisplayName-nek)
+        Test testAnnotation = method.getAnnotation(Test.class);
+        if (testAnnotation != null && !testAnnotation.description().isEmpty()) {
+            testName = testAnnotation.description();
+        }
+
+        logger.info(">>> Teszt indítása: {}", testName);
     }
 
-    @AfterEach
-    public void stopLog(TestInfo testInfo) {
-        logger.info("<<< Teszt befejezve: {}", testInfo.getDisplayName());
+    @AfterSuite
+    public void cleanUpAfterTests() {
+        Allure.step("Tesztek utáni takarítás: config.properties alaphelyzetbe állítása", () -> {
+            logger.info("Takarítás folyamatban...");
+
+            List<String> keysToRemove = List.of(
+                    "aud_balance_before",
+                    "customer_transaction_id",
+                    "eur_balance_before",
+                    "fee_amounts_value",
+                    "first_five_ids",
+                    "gbp_balance_before",
+                    "next_page_cursor",
+                    "quote_id",
+                    "recipient_id_eur",
+                    "recipient_id_usa",
+                    "source_amount_value",
+                    "target_amount_value",
+                    "transaction_id",
+                    "transfer_id_usa",
+                    "usd_balance_before"
+            );
+
+            try {
+                String configPath = "src/test/resources/config.properties";
+                File configFile = new File(configPath);
+
+                if (configFile.exists()) {
+                    Properties props = new Properties();
+
+                    try (FileInputStream in = new FileInputStream(configFile)) {
+                        props.load(in);
+                    }
+
+                    boolean changed = false;
+                    for (String key : keysToRemove) {
+                        if (props.containsKey(key)) {
+                            props.remove(key);
+                            logger.info("Kulcs eltávolítva: {}", key);
+                            changed = true;
+                        }
+                    }
+
+                    if (changed) {
+                        try (FileOutputStream out = new FileOutputStream(configFile)) {
+                            props.store(out, "Automatikus adattisztítás tesztfutás után.");
+                        }
+                        logger.info("A config.properties fájl sikeresen megtisztítva.");
+                    }
+                }
+            } catch (IOException e) {
+                logger.error("Hiba történt a takarítás során: {}", e.getMessage());
+            }
+        });
+    }
+
+    @AfterMethod
+    public void stopLog(ITestResult result) {
+        logger.info("<<< Teszt befejezve: {}", result.getMethod().getMethodName());
         logger.info("-------------------------------------------------------");
     }
 
-    public static Matcher<Object> validAmount() {
+    public Matcher<Object> validAmount() {
         return new TypeSafeMatcher<>() {
             @Override
             protected boolean matchesSafely(Object value) {

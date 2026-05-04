@@ -2,16 +2,16 @@ package test.errorHandling;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-ERR-02: Hibakezelés - Jogosulatlan hozzáférés")
 public class TcWiseErr02Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-ERR-02: Hibakezelés - Jogosulatlan hozzáférés")
     @Description("Egy idegen vagy nem létező kedvezményezett (Recipient) lekérdezése véletlenszerű ID-val. A várt eredmény HTTP 403 Forbidden.")
     public void unauthorizedRecipientAccessTest() {
         String randomRecipientId = "700975572";
@@ -33,6 +33,7 @@ public class TcWiseErr02Test extends BaseOfWiseTests {
             attachJson(response, "Hiba válasz - Unauthorized");
 
             response.then()
+                    .assertThat()
                     .body("error", equalTo("unauthorized"))
                     .body("message", equalTo("Unauthorized"))
                     .body("status", is(403))

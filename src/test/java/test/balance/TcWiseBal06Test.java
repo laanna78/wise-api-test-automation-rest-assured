@@ -2,7 +2,7 @@ package test.balance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,9 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@DisplayName("TC-WISE-BAL-06: Összes egyenleg listázása")
 public class TcWiseBal06Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-BAL-06: Összes egyenleg listázása")
     @Description("A profilhoz tartozó összes aktív egyenleg lekérése és a lista tartalmának ellenőrzése.")
     public void listAllBalancesTest() {
 
@@ -36,6 +36,7 @@ public class TcWiseBal06Test extends BaseOfWiseTests {
             attachJson(response, "Egyenleg lista");
 
             response.then()
+                    .assertThat()
                     .body("$", instanceOf(List.class))
                     .body("$.size()", greaterThan(0))
                     .body("id", hasItems(

@@ -2,7 +2,7 @@ package test.finance;
 
 import io.qameta.allure.*;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.*;
+import org.testng.annotations.*;
 import test.BaseOfWiseTests;
 import utils.ConfigReader;
 
@@ -12,9 +12,10 @@ import java.util.Map;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-@DisplayName("TC-WISE-FIN-01: Kedvezményezett létrehozása - amerikai számla")
+
 public class TcWiseFin01Test extends BaseOfWiseTests {
-    @Test
+
+    @Test(description = "TC-WISE-FIN-01: Kedvezményezett létrehozása - amerikai számla")
     @Description("Új külső bankszámla rögzítése a profilhoz 'aba' típussal, és a kapott ID elmentése.")
     public void createUsaRecipientTest() {
 
@@ -55,6 +56,7 @@ public class TcWiseFin01Test extends BaseOfWiseTests {
             attachJson(response, "Létrehozott kedvezményezett");
 
             response.then()
+                    .assertThat()
                     .body("id", notNullValue())
                     .body("accountHolderName", equalTo("Amerikai Kedvezményezett"))
                     .body("currency", equalTo("USD"));
