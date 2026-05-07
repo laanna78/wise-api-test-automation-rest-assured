@@ -39,15 +39,14 @@ jobs:
           BALANCE_ID_NA: ${{ secrets.BALANCE_ID_NA }}
           BALANCE_ID_HUF: ${{ secrets.BALANCE_ID_HUF }}
           BALANCE_ID_USD: ${{ secrets.BALANCE_ID_USD }}
-      - name: Generate Allure Report
-        if: always()
+      - name: Generate Single File Allure Report
         run: |
-          mvn allure:report
+          npx allure generate target/allure-results --clean --single-file -o target/allure-report-single
 
-      - name: Upload Allure Results
+      - name: Upload Single File Report
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: full-allure-report
-          path: target/site/allure-maven-plugin/
-          retention-days: 45
+          name: wise-api-test-report-standalone
+          path: target/allure-report-single/index.html
+          retention-days: 50
