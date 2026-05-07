@@ -41,12 +41,16 @@ jobs:
           BALANCE_ID_USD: ${{ secrets.BALANCE_ID_USD }}
       - name: Generate Single File Allure Report
         run: |
-          npx allure generate target/allure-results --clean --single-file -o target/allure-report-single
+          npx allure@latest generate -o target/allure-report-standalone target/allure-results
+
+      - name: Debug - List files
+        if: always()
+        run: ls -R target/allure-report-standalone
 
       - name: Upload Single File Report
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: wise-api-test-report-standalone
-          path: target/allure-report-single/index.html
+          name: standalone-test-report
+          path: target/allure-report-standalone/index.html
           retention-days: 50
