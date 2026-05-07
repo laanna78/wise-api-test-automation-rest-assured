@@ -48,6 +48,6 @@ jobs:
         uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: allure-results
-          path: target/allure-results
+          name: full-allure-report
+          path: target/site/allure-maven-plugin/
           retention-days: 45
