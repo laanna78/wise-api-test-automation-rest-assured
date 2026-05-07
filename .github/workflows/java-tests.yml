@@ -21,6 +21,7 @@ jobs:
           cache: maven
 
       - name: Build and Run Tests with Maven
+        run: mvn test
         env:
           WISE_API_TOKEN: ${{ secrets.WISE_API_TOKEN }}
           WISE_BASE_URL: ${{ secrets.WISE_BASE_URL }}
@@ -33,7 +34,6 @@ jobs:
           BALANCE_ID_GBP: ${{ secrets.BALANCE_ID_GBP }}
           BALANCE_ID_USD: ${{ secrets.BALANCE_ID_USD }}
           BALANCE_ID_HUF: ${{ secrets.BALANCE_ID_HUF }}
-        run: mvn test
 
       - name: Generate Allure Report
         if: always()

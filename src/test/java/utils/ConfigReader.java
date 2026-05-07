@@ -18,8 +18,13 @@ public class ConfigReader {
 
     public static String getProperty(String key) {
         String value = System.getenv(key.toUpperCase());
-        if (value != null) return value;
-        return properties.getProperty(key);
+        if (value == null) {
+            value = System.getenv(key);
+        }
+        if (value == null && properties != null) {
+            value = properties.getProperty(key);
+        }
+        return value;
     }
 
     public static void setProperty(String key, String value) {
