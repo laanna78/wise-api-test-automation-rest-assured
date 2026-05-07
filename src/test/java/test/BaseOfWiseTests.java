@@ -33,6 +33,12 @@ public class BaseOfWiseTests {
 
     @BeforeSuite
     public void setup() {
+        String baseUri = ConfigReader.getProperty("base_url");
+
+        if (baseUri == null || baseUri.isEmpty())
+            throw new RuntimeException("HIBA: A 'base_url' nem található sem a környezeti változókban, sem a " +
+                    "config.properties fájlban!");
+
         RestAssured.baseURI = ConfigReader.getProperty("base_url");
 
         RestAssured.filters(new AllureRestAssured(), new RequestLoggingFilter(), new ResponseLoggingFilter());
