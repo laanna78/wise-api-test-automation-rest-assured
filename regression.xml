@@ -18,6 +18,14 @@
             <class name="test.balance.TcWiseBal06Test"/>
             <class name="test.balance.TcWiseBal07Test"/>
 
+            <class name="test.transaction.TcWiseTra01Test"/>
+            <class name="test.transaction.TcWiseTra02Test"/>
+            <class name="test.transaction.TcWiseTra03Test"/>
+            <class name="test.transaction.TcWiseTra04Test"/>
+            <class name="test.transaction.TcWiseTra05Test"/>
+            <class name="test.transaction.TcWiseTra06Test"/>
+            <class name="test.transaction.TcWiseTra07Test"/>
+
             <class name="test.finance.TcWiseFin01Test"/>
             <class name="test.finance.TcWiseFin02Test"/>
             <class name="test.finance.TcWiseFin03Test"/>
@@ -35,14 +43,6 @@
             <class name="test.finance.TcWiseFin15Test"/>
             <class name="test.finance.TcWiseFin16Test"/>
             <class name="test.finance.TcWiseFin17Test"/>
-
-            <class name="test.transaction.TcWiseTra01Test"/>
-            <class name="test.transaction.TcWiseTra02Test"/>
-            <class name="test.transaction.TcWiseTra03Test"/>
-            <class name="test.transaction.TcWiseTra04Test"/>
-            <class name="test.transaction.TcWiseTra05Test"/>
-            <class name="test.transaction.TcWiseTra06Test"/>
-            <class name="test.transaction.TcWiseTra07Test"/>
 
             <class name="test.foreignExchange.TcWiseFx01Test"/>
             <class name="test.foreignExchange.TcWiseFx02Test"/>

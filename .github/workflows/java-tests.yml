@@ -39,7 +39,6 @@ jobs:
           BALANCE_ID_NA: ${{ secrets.BALANCE_ID_NA }}
           BALANCE_ID_HUF: ${{ secrets.BALANCE_ID_HUF }}
           BALANCE_ID_USD: ${{ secrets.BALANCE_ID_USD }}
-          QUOTE_ID_INSUFFICIENT: ${{ secrets.QUOTE_ID_INSUFFICIENT }}
       - name: Generate Allure Report
         if: always()
         run: |
