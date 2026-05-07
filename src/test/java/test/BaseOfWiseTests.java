@@ -75,6 +75,7 @@ public class BaseOfWiseTests {
                     "gbp_balance_before",
                     "next_page_cursor",
                     "quote_id",
+                    "quote_id_insufficient",
                     "recipient_id_eur",
                     "recipient_id_usa",
                     "source_amount_value",

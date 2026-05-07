@@ -27,11 +27,17 @@ public class TcWiseFin09Test extends BaseOfWiseTests {
         Response response = Allure.step("Lépés 1: POST kérés küldése a külső utalás elindításához", () -> {
             logger.info("Külső utalás indítása (USD)...");
             return given()
+                    .noFilters()
                     .header("Authorization", "Bearer " + ConfigReader.getProperty("auth_token"))
                     .contentType(JSON)
                     .body(requestBody)
             .when()
                     .post("/v1/transfers");
+        });
+
+        Allure.step("Lépés 1b: Kérés és válasz naplózása", () -> {
+            Allure.addAttachment("Request Body", requestBody.toString());
+            attachJson(response, "API Válasz");
         });
 
         Allure.step("Lépés 2: HTTP 200 OK státuszkód ellenőrzése", (step) -> {

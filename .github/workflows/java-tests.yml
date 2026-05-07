@@ -6,6 +6,7 @@ on:
     branches: [ master ]
 
 env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -45,7 +46,7 @@ jobs:
           mvn allure:report
 
       - name: Upload Allure Results
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: full-allure-report
