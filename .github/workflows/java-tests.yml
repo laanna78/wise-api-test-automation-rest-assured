@@ -41,7 +41,7 @@ jobs:
           BALANCE_ID_USD: ${{ secrets.BALANCE_ID_USD }}
       - name: Generate Single File Allure Report
         run: |
-          npx allure generate target/allure-results -o target/allure-report-standalone --single-file
+          npx allure-commandline@2.30.0 generate target/allure-results --clean --single-file -o target/allure-report-standalone
 
       - name: Debug - List files
         if: always()
