@@ -40,6 +40,27 @@ __Előfeltételek__
 
 2. Apache Maven telepítve
 
+__Konfiguráció (Szenzitív adatok)__  
+
+A biztonsági protokoll miatt a hitelesítő adatokat tartalmazó fájl nem része a repository-nak. A tesztek futtatásához:
+
+1. Hozz létre egy `config.properties` fájlt a `src/test/resources/` mappában.
+
+Másold bele és töltsd ki az alábbi változókat:  
+
+`auth_token=`  
+`balance_id_aud=`  
+`balance_id_eur=`  
+`balance_id_gbp=`  
+`balance_id_huf=`  
+`balance_id_na=`  
+`balance_id_usd=`  
+`base_url=https\://api.wise-sandbox.com`  
+`expected_first_name=`  
+`expected_last_name=`  
+`expected_profile_id=`  
+`invalid_token=`  
+
 __Telepítés__  
 
 `mvn clean install`  
